@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fueling Gold — LA28 Olympic Nutrition</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f0f0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:24px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.app-label{font-size:13px;color:#888;margin-bottom:12px;letter-spacing:0.5px}
+.phone{width:375px;min-height:760px;background:#fff;border-radius:40px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.18);border:6px solid #1a1a2e;position:relative}
+.screen{display:none;flex-direction:column;min-height:748px}
+.screen.active{display:flex}
+.topbar{background:#1a1a2e;padding:14px 16px 10px;display:flex;align-items:center;gap:10px}
+.topbar-title{color:#EF9F27;font-weight:600;font-size:15px;flex:1}
+.topbar-badge{background:#EF9F27;color:#412402;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.nav-tabs{display:flex;border-bottom:1px solid #eee;background:#fff}
+.nav-tab{flex:1;padding:10px 4px;font-size:11px;color:#888;text-align:center;cursor:pointer;border-bottom:2px solid transparent;user-select:none}
+.nav-tab.active{color:#BA7517;border-bottom:2px solid #BA7517;font-weight:600}
+.content{flex:1;overflow-y:auto;padding:14px;background:#fafafa}
+.gold-btn{background:#BA7517;color:#FAEEDA;border:none;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:8px}
+.gold-btn:hover{background:#9a6012}
+.outline-btn{background:transparent;color:#BA7517;border:1.5px solid #BA7517;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.outline-btn:hover{background:#FAEEDA}
+.card{background:#fff;border:1px solid #eee;border-radius:14px;padding:13px;margin-bottom:10px}
+.macro-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.macro-box{background:#f5f5f5;border-radius:8px;padding:7px;text-align:center}
+.macro-val{font-size:14px;font-weight:600;color:#222}
+.macro-lbl{font-size:9px;color:#999;margin-top:1px}
+.progress-bar{height:6px;background:#eee;border-radius:4px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:4px}
+.qr-box{background:#1a1a2e;border-radius:14px;padding:20px;text-align:center;margin:10px 0}
+.qr-inner{width:110px;height:110px;background:white;margin:0 auto 12px;border-radius:10px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.scan-line{position:absolute;left:6px;right:6px;height:2px;background:#EF9F27;animation:scanMove 1.5s infinite}
+@keyframes scanMove{0%{top:10%}50%{top:82%}100%{top:10%}}
+.mode-toggle{display:flex;background:#f0f0f0;border-radius:10px;padding:3px;margin:10px 0}
+.mode-opt{flex:1;padding:7px;font-size:11px;text-align:center;border-radius:8px;cursor:pointer;color:#777;font-weight:500}
+.mode-opt.active{background:#BA7517;color:#FAEEDA;font-weight:600}
+.meal-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0}
+.food-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tag{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+.athlete-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.athlete-row:hover{background:#faf7f0;margin:0 -4px;padding:9px 4px;border-radius:8px}
+.avatar{width:38px;height:38px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#412402;flex-shrink:0}
+.station-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600}
+input[type=text],select{font-size:12px;padding:8px 11px;border-radius:8px;border:1px solid #ddd;background:#f9f9f9;color:#222;width:100%;margin-bottom:8px;outline:none}
+input[type=text]:focus,select:focus{border-color:#BA7517}
+.notif-dot{width:7px;height:7px;background:#E24B4A;border-radius:50%;margin-left:3px;display:inline-block;vertical-align:2px}
+.login-wrap{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:748px;padding:28px;background:#fff}
+.role-card{width:100%;background:#faf7f0;border:1px solid #eee;border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color 0.2s}
+.role-card:hover{border-color:#BA7517;background:#fff8ee}
+.role-icon{width:46px;height:46px;border-radius:10px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app-label">FUELING GOLD · LA28 Olympic Nutrition App</div>
+<div class="phone" id="phone">
+
+  <div class="screen active" id="screen-login">
+    <div class="login-wrap">
+      <div style="margin-bottom:28px;text-align:center">
+        <div style="width:70px;height:70px;background:#1a1a2e;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+          <i class="ti ti-trophy" style="font-size:32px;color:#EF9F27"></i>
+        </div>
+        <div style="font-size:24px;font-weight:700;color:#1a1a2e">Fueling Gold</div>
+        <div style="font-size:12px;color:#888;margin-top:3px">UCLA Olympic Dining · LA28</div>
+      </div>
+      <div style="width:100%;margin-bottom:10px;font-size:12px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Sign in as</div>
+      <div class="role-card" onclick="showAthlete()">
+        <div class="role-icon"><i class="ti ti-run" style="font-size:24px;color:#BA7517"></i></div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:600;color:#1a1a2e">Athlete</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">Scan food, track macros, view meal plan</div>
+        </div>
+        <i class="ti ti-chevron-right" style="color:#ccc;font-size:18px"></i>
+      </div>
+      <div class="role-card" onclick="showNutritionist()">
+        <div class="role-icon"><i class="ti ti-clipboard-list" style="font-size:24px;color:#185FA5"></i></div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:600;color:#1a1a2e">Nutritionist</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">Build plans, set targets, monitor athletes</div>
+        </div>
+        <i class="ti ti-chevron-right" style="color:#ccc;font-size:18px"></i>
+      </div>
+      <div style="font-size:10px;color:#bbb;margin-top:20px;text-align:center">Official nutrition platform · LA28 Olympic Games</div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-athlete">
+    <div class="topbar">
+      <i class="ti ti-trophy" style="font-size:20px;color:#EF9F27"></i>
+      <span class="topbar-title">Fueling Gold</span>
+      <span class="topbar-badge">Athlete</span>
+      <i class="ti ti-bell" style="font-size:20px;color:#EF9F27;margin-left:6px"></i>
+    </div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="athleteTab(this,'at-today')"><i class="ti ti-calendar" style="font-size:15px;display:block;margin:0 auto 2px"></i>Today</div>
+      <div class="nav-tab" onclick="athleteTab(this,'at-scan')"><i class="ti ti-qrcode" style="font-size:15px;display:block;margin:0 auto 2px"></i>Scan</div>
+      <div class="nav-tab" onclick="athleteTab(this,'at-stations')"><i class="ti ti-building-store" style="font-size:15px;display:block;margin:0 auto 2px"></i>Stations</div>
+      <div class="nav-tab" onclick="athleteTab(this,'at-log')"><i class="ti ti-chart-bar" style="font-size:15px;display:block;margin:0 auto 2px"></i>Log</div>
+    </div>
+
+    <div class="content" id="at-today" style="display:block">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:17px;font-weight:700;color:#1a1a2e">Good morning, Marcus</div>
+          <div style="font-size:11px;color:#888">Competition day · Pre-race meal</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:#aaa">100m Sprint</div>
+          <div style="font-size:11px;color:#3B6D11;font-weight:600">14:30 today</div>
+        </div>
+      </div>
+      <div class="card" style="background:#fff8ee;border-color:#EF9F27">
+        <div style="font-size:11px;font-weight:700;color:#412402;margin-bottom:8px"><i class="ti ti-clipboard-check" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Nutritionist meal plan · Today</div>
+        <div class="meal-item">
+          <div class="food-dot" style="background:#639922"></div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#222">Pasta (250g)</div><div style="font-size:10px;color:#888">Endurance Fuel station</div></div>
+          <span class="tag" style="background:#EAF3DE;color:#27500A">C 74g</span>
+        </div>
+        <div class="meal-item">
+          <div class="food-dot" style="background:#185FA5"></div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#222">Salmon (150g)</div><div style="font-size:10px;color:#888">Hydration & Recovery station</div></div>
+          <span class="tag" style="background:#E6F1FB;color:#0C447C">P 31g</span>
+        </div>
+        <div class="meal-item" style="border:none">
+          <div class="food-dot" style="background:#BA7517"></div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#222">Avocado (100g)</div><div style="font-size:10px;color:#888">Plant-Based Performance station</div></div>
+          <span class="tag" style="background:#FAEEDA;color:#633806">F 15g</span>
+        </div>
+        <button class="gold-btn" onclick="athleteTab(document.querySelectorAll('#screen-athlete .nav-tab')[1],'at-scan')">Scan food at dining hall</button>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:8px">Today's macro targets</div>
+      <div class="macro-row" style="grid-template-columns:1fr 1fr">
+        <div class="macro-box"><div class="macro-val" style="color:#3B6D11">2,850</div><div class="macro-lbl">kcal target</div><div class="progress-bar"><div class="progress-fill" style="width:62%;background:#3B6D11"></div></div><div style="font-size:9px;color:#aaa;margin-top:3px">1,767 logged</div></div>
+        <div class="macro-box"><div class="macro-val" style="color:#185FA5">185g</div><div class="macro-lbl">protein target</div><div class="progress-bar"><div class="progress-fill" style="width:55%;background:#185FA5"></div></div><div style="font-size:9px;color:#aaa;margin-top:3px">102g logged</div></div>
+        <div class="macro-box"><div class="macro-val" style="color:#BA7517">320g</div><div class="macro-lbl">carbs target</div><div class="progress-bar"><div class="progress-fill" style="width:48%;background:#BA7517"></div></div><div style="font-size:9px;color:#aaa;margin-top:3px">154g logged</div></div>
+        <div class="macro-box"><div class="macro-val" style="color:#993C1D">65g</div><div class="macro-lbl">fats target</div><div class="progress-bar"><div class="progress-fill" style="width:71%;background:#993C1D"></div></div><div style="font-size:9px;color:#aaa;margin-top:3px">46g logged</div></div>
+      </div>
+    </div>
+
+    <div class="content" id="at-scan" style="display:none">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:700;color:#1a1a2e">Scan nutrition card QR</div>
+        <div style="font-size:11px;color:#888">Point camera at any station food label</div>
+      </div>
+      <div class="qr-box">
+        <div class="qr-inner">
+          <svg width="90" height="90" viewBox="0 0 80 80">
+            <rect x="4" y="4" width="28" height="28" rx="3" fill="none" stroke="#1a1a2e" stroke-width="3"/>
+            <rect x="10" y="10" width="16" height="16" rx="1" fill="#1a1a2e"/>
+            <rect x="48" y="4" width="28" height="28" rx="3" fill="none" stroke="#1a1a2e" stroke-width="3"/>
+            <rect x="54" y="10" width="16" height="16" rx="1" fill="#1a1a2e"/>
+            <rect x="4" y="48" width="28" height="28" rx="3" fill="none" stroke="#1a1a2e" stroke-width="3"/>
+            <rect x="10" y="54" width="16" height="16" rx="1" fill="#1a1a2e"/>
+            <rect x="48" y="48" width="8" height="8" fill="#1a1a2e"/>
+            <rect x="60" y="48" width="8" height="8" fill="#1a1a2e"/>
+            <rect x="48" y="60" width="8" height="8" fill="#1a1a2e"/>
+            <rect x="60" y="60" width="8" height="8" fill="#1a1a2e"/>
+          </svg>
+          <div class="scan-line"></div>
+        </div>
+        <div style="color:#EF9F27;font-size:13px;font-weight:600">Scanning for food label...</div>
+        <div style="color:#888;font-size:10px;margin-top:4px">Works at all 5 UCLA dining buffet stations</div>
+      </div>
+      <button class="gold-btn" onclick="showScanned()">Simulate scan — Quinoa 150g</button>
+      <div id="scanned-result" style="display:none">
+        <div class="card" style="border-color:#BA7517;margin-top:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div><div style="font-size:15px;font-weight:700;color:#1a1a2e">Quinoa</div><span class="station-pill" style="background:#FAEEDA;color:#633806">Endurance Fuel</span></div>
+            <div style="text-align:right"><div style="font-size:11px;color:#888">Weighed on scale</div><div style="font-size:20px;font-weight:700;color:#BA7517">150g</div></div>
+          </div>
+          <div class="macro-row">
+            <div class="macro-box"><div class="macro-val">180</div><div class="macro-lbl">kcal</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#185FA5">6.6g</div><div class="macro-lbl">protein</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#BA7517">31g</div><div class="macro-lbl">carbs</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#993C1D">2.9g</div><div class="macro-lbl">fat</div></div>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0">
+            <div style="font-size:10px;color:#888;margin-bottom:5px">Micros per 150g</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="tag" style="background:#f5f5f5;color:#666">Iron 2.8mg</span>
+              <span class="tag" style="background:#f5f5f5;color:#666">Magnesium 59mg</span>
+              <span class="tag" style="background:#f5f5f5;color:#666">Fiber 3.9g</span>
+              <span class="tag" style="background:#f5f5f5;color:#666">Zinc 1.7mg</span>
+            </div>
+          </div>
+          <button class="gold-btn" style="margin-top:12px">Add to today's log</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="at-stations" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px">UCLA dining · 5 buffet stations</div>
+      <div id="stations-list"></div>
+    </div>
+
+    <div class="content" id="at-log" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px">Today's food log</div>
+      <div class="macro-row" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+        <div class="macro-box"><div class="macro-val">1,767</div><div class="macro-lbl">kcal logged</div></div>
+        <div class="macro-box"><div class="macro-val" style="color:#3B6D11">62%</div><div class="macro-lbl">of daily target</div></div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Breakfast · 07:15</div>
+        <div class="meal-item"><div class="food-dot" style="background:#BA7517"></div><div style="flex:1"><div style="font-size:12px;color:#222">Oats 200g</div></div><div style="font-size:11px;color:#888">340 kcal</div></div>
+        <div class="meal-item" style="border:none"><div class="food-dot" style="background:#185FA5"></div><div style="flex:1"><div style="font-size:12px;color:#222">Greek yogurt 150g</div></div><div style="font-size:11px;color:#888">130 kcal</div></div>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Lunch · 12:00</div>
+        <div class="meal-item"><div class="food-dot" style="background:#639922"></div><div style="flex:1"><div style="font-size:12px;color:#222">Salmon 150g</div></div><div style="font-size:11px;color:#888">310 kcal</div></div>
+        <div class="meal-item"><div class="food-dot" style="background:#BA7517"></div><div style="flex:1"><div style="font-size:12px;color:#222">Sweet potato 180g</div></div><div style="font-size:11px;color:#888">162 kcal</div></div>
+        <div class="meal-item" style="border:none"><div class="food-dot" style="background:#993C1D"></div><div style="flex:1"><div style="font-size:12px;color:#222">Avocado 80g</div></div><div style="font-size:11px;color:#888">128 kcal</div></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;text-align:center;margin-top:8px">Dinner not yet logged · Head to the dining hall</div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-nutritionist">
+    <div class="topbar">
+      <i class="ti ti-clipboard-list" style="font-size:20px;color:#EF9F27"></i>
+      <span class="topbar-title">Fueling Gold · Coach</span>
+      <span class="topbar-badge">Nutritionist</span>
+    </div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="nutriTab(this,'nt-athletes')"><i class="ti ti-users" style="font-size:15px;display:block;margin:0 auto 2px"></i>Athletes</div>
+      <div class="nav-tab" onclick="nutriTab(this,'nt-plan')"><i class="ti ti-calendar-plus" style="font-size:15px;display:block;margin:0 auto 2px"></i>Build plan</div>
+      <div class="nav-tab" onclick="nutriTab(this,'nt-menu')"><i class="ti ti-building-store" style="font-size:15px;display:block;margin:0 auto 2px"></i>Menu</div>
+      <div class="nav-tab" onclick="nutriTab(this,'nt-alerts')"><i class="ti ti-bell" style="font-size:15px;display:block;margin:0 auto 2px"></i>Alerts<span class="notif-dot"></span></div>
+    </div>
+
+    <div class="content" id="nt-athletes" style="display:block">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px">My athletes · Team USA Sprint</div>
+      <div id="athlete-list"></div>
+      <div style="font-size:11px;color:#aaa;text-align:center;margin-top:6px">Tap an athlete to edit their meal plan</div>
+    </div>
+
+    <div class="content" id="nt-plan" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:6px">Build meal plan</div>
+      <select>
+        <option>Marcus Johnson — 100m Sprint</option>
+        <option>Aisha Okafor — 200m Sprint</option>
+        <option>Tyler Chen — Long Jump</option>
+        <option>Sofia Reyes — 400m Hurdles</option>
+      </select>
+      <div class="mode-toggle">
+        <div class="mode-opt active" id="mode-exact" onclick="setPlanMode('exact')">Exact meal plan</div>
+        <div class="mode-opt" id="mode-macros" onclick="setPlanMode('macros')">Macros & micros only</div>
+      </div>
+      <div id="plan-exact">
+        <div style="font-size:11px;color:#888;margin-bottom:8px">Select foods from dining hall menu. Athlete sees exact items + stations to visit.</div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:10px">Pre-competition meal</div>
+          <div class="meal-item"><div class="food-dot" style="background:#BA7517"></div><div style="flex:1"><div style="font-size:12px;color:#222">Pasta 250g</div><div style="font-size:10px;color:#888">Endurance Fuel</div></div><span class="tag" style="background:#FAEEDA;color:#633806">373 kcal</span></div>
+          <div class="meal-item"><div class="food-dot" style="background:#185FA5"></div><div style="flex:1"><div style="font-size:12px;color:#222">Salmon 150g</div><div style="font-size:10px;color:#888">Hydration & Recovery</div></div><span class="tag" style="background:#E6F1FB;color:#0C447C">310 kcal</span></div>
+          <div class="meal-item" style="border:none"><div class="food-dot" style="background:#639922"></div><div style="flex:1"><div style="font-size:12px;color:#222">Avocado 80g</div><div style="font-size:10px;color:#888">Plant-Based</div></div><span class="tag" style="background:#EAF3DE;color:#27500A">128 kcal</span></div>
+          <button class="outline-btn" style="width:100%;margin-top:10px" onclick="nutriTab(document.querySelectorAll('#screen-nutritionist .nav-tab')[2],'nt-menu')">+ Add food from menu</button>
+        </div>
+        <div style="padding:10px;background:#f5f5f5;border-radius:10px;margin-bottom:10px">
+          <div style="font-size:11px;color:#888;margin-bottom:6px">Plan totals</div>
+          <div class="macro-row">
+            <div class="macro-box"><div class="macro-val">811</div><div class="macro-lbl">kcal</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#185FA5">52g</div><div class="macro-lbl">protein</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#BA7517">89g</div><div class="macro-lbl">carbs</div></div>
+            <div class="macro-box"><div class="macro-val" style="color:#993C1D">24g</div><div class="macro-lbl">fat</div></div>
+          </div>
+        </div>
+        <button class="gold-btn">Send plan to Marcus</button>
+      </div>
+      <div id="plan-macros" style="display:none">
+        <div style="font-size:11px;color:#888;margin-bottom:8px">Set daily targets only. Athlete chooses their own foods to hit these numbers.</div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:10px">Daily macro targets</div>
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Total calories</div><input type="text" value="2,850 kcal">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Protein</div><input type="text" value="185g">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Carbohydrates</div><input type="text" value="320g">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Fats</div><input type="text" value="65g">
+        </div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:10px">Micronutrient targets</div>
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Iron</div><input type="text" value="18mg">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Calcium</div><input type="text" value="1,000mg">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Vitamin D</div><input type="text" value="600 IU">
+          <div style="font-size:11px;color:#888;margin-bottom:3px">Magnesium</div><input type="text" value="420mg">
+        </div>
+        <button class="gold-btn">Send targets to Marcus</button>
+      </div>
+    </div>
+
+    <div class="content" id="nt-menu" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:4px">UCLA dining hall menu</div>
+      <div style="font-size:11px;color:#888;margin-bottom:12px">Tap any food to add to a plan</div>
+      <div id="menu-list"></div>
+    </div>
+
+    <div class="content" id="nt-alerts" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px">Athlete alerts</div>
+      <div class="card" style="border-color:#E24B4A">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <i class="ti ti-alert-triangle" style="font-size:20px;color:#A32D2D;flex-shrink:0;margin-top:1px"></i>
+          <div><div style="font-size:13px;font-weight:600;color:#222">Marcus under on carbs</div><div style="font-size:11px;color:#888;margin-top:2px">Only 154g logged vs 320g target — competition in 3hrs</div><button class="outline-btn" style="margin-top:10px;font-size:11px" onclick="nutriTab(document.querySelectorAll('#screen-nutritionist .nav-tab')[1],'nt-plan')">Update plan now</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <i class="ti ti-check" style="font-size:20px;color:#3B6D11;flex-shrink:0;margin-top:1px"></i>
+          <div><div style="font-size:13px;font-weight:600;color:#222">Aisha hit protein target</div><div style="font-size:11px;color:#888;margin-top:2px">190g logged — above 185g goal. Great recovery day.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <i class="ti ti-alert-circle" style="font-size:20px;color:#854F0B;flex-shrink:0;margin-top:1px"></i>
+          <div><div style="font-size:13px;font-weight:600;color:#222">Tyler hasn't logged today</div><div style="font-size:11px;color:#888;margin-top:2px">No food logged since 6:00 AM. Long Jump finals at 17:00.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const stations=[
+  {name:"Endurance Fuel",color:"#BA7517",bg:"#FAEEDA",foods:[{name:"Pasta",g:100,kcal:158,p:6,c:31,f:1},{name:"Oats",g:100,kcal:389,p:17,c:66,f:7},{name:"Sweet potato",g:100,kcal:90,p:2,c:21,f:0},{name:"Quinoa",g:100,kcal:120,p:4,c:21,f:2},{name:"Brown rice",g:100,kcal:111,p:3,c:23,f:1},{name:"Whole grain bread",g:100,kcal:247,p:9,c:41,f:4}]},
+  {name:"Hydration & Recovery",color:"#185FA5",bg:"#E6F1FB",foods:[{name:"Salmon",g:100,kcal:208,p:20,c:0,f:13},{name:"Greek yogurt",g:100,kcal:97,p:9,c:4,f:5},{name:"Smoothie (berry)",g:250,kcal:145,p:3,c:32,f:1},{name:"Tuna",g:100,kcal:132,p:29,c:0,f:1},{name:"Coconut water",g:250,kcal:60,p:1,c:15,f:0},{name:"Chocolate milk",g:250,kcal:190,p:8,c:26,f:5}]},
+  {name:"Plant-Based Performance",color:"#3B6D11",bg:"#EAF3DE",foods:[{name:"Tempeh",g:100,kcal:193,p:19,c:9,f:11},{name:"Black beans",g:100,kcal:132,p:9,c:24,f:1},{name:"Avocado",g:100,kcal:160,p:2,c:9,f:15},{name:"Edamame",g:100,kcal:122,p:11,c:10,f:5},{name:"Lentils",g:100,kcal:116,p:9,c:20,f:0},{name:"Hemp seeds",g:30,kcal:170,p:9,c:3,f:14}]},
+  {name:"Allergen Safe",color:"#534AB7",bg:"#EEEDFE",foods:[{name:"GF rice pasta",g:100,kcal:155,p:3,c:35,f:1},{name:"Almond-free trail mix",g:50,kcal:240,p:6,c:28,f:13},{name:"Rice cakes",g:30,kcal:117,p:2,c:26,f:1},{name:"GF oats",g:100,kcal:389,p:13,c:66,f:7},{name:"Dairy-free yogurt",g:150,kcal:95,p:4,c:18,f:1}]},
+  {name:"Grab & Go",color:"#993556",bg:"#FBEAF0",foods:[{name:"Protein bar",g:60,kcal:220,p:20,c:24,f:7},{name:"Overnight oats",g:200,kcal:310,p:12,c:52,f:7},{name:"Hard boiled egg pack",g:120,kcal:187,p:16,c:1,f:13},{name:"Banana",g:120,kcal:107,p:1,c:27,f:0},{name:"Nut butter packet",g:32,kcal:190,p:7,c:7,f:16},{name:"Fruit & seed bar",g:45,kcal:175,p:4,c:29,f:5}]}
+];
+const athletes=[
+  {init:"MJ",name:"Marcus Johnson",sport:"100m Sprint",kcal:2850,logged:62},
+  {init:"AO",name:"Aisha Okafor",sport:"200m Sprint",kcal:2600,logged:88},
+  {init:"TC",name:"Tyler Chen",sport:"Long Jump",kcal:3100,logged:10},
+  {init:"SR",name:"Sofia Reyes",sport:"400m Hurdles",kcal:2750,logged:74}
+];
+function renderStations(){
+  document.getElementById('stations-list').innerHTML=stations.map(s=>`<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="width:11px;height:11px;border-radius:50%;background:${s.color}"></div><div style="font-size:13px;font-weight:700;color:#1a1a2e">${s.name}</div></div>${s.foods.map(f=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f5"><div><div style="font-size:12px;color:#222">${f.name} <span style="font-size:10px;color:#aaa">per ${f.g}g</span></div><div style="font-size:10px;color:#888">${f.p}g prot · ${f.c}g carbs · ${f.f}g fat</div></div><span style="font-size:12px;font-weight:600;color:${s.color}">${f.kcal} kcal</span></div>`).join('')}</div>`).join('');
+}
+function renderAthletes(){
+  document.getElementById('athlete-list').innerHTML=athletes.map(a=>`<div class="athlete-row" onclick="nutriTab(document.querySelectorAll('#screen-nutritionist .nav-tab')[1],'nt-plan')"><div class="avatar">${a.init}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1a1a2e">${a.name}</div><div style="font-size:10px;color:#888">${a.sport} · ${a.kcal} kcal target</div><div class="progress-bar" style="margin-top:5px"><div class="progress-fill" style="width:${a.logged}%;background:${a.logged<30?'#E24B4A':a.logged<60?'#BA7517':'#3B6D11'}"></div></div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:${a.logged<30?'#A32D2D':a.logged<60?'#854F0B':'#27500A'}">${a.logged}%</div><div style="font-size:9px;color:#aaa">logged</div></div></div>`).join('');
+}
+function renderMenu(){
+  document.getElementById('menu-list').innerHTML=stations.map(s=>`<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;padding:5px 10px;background:${s.bg};color:${s.color};border-radius:8px;margin-bottom:7px">${s.name}</div>${s.foods.map(f=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f5f5f5"><div><div style="font-size:12px;color:#222">${f.name}</div><div style="font-size:10px;color:#888">${f.kcal} kcal · P${f.p} C${f.c} F${f.f}</div></div><button class="outline-btn" style="padding:4px 10px;font-size:10px" onclick="nutriTab(document.querySelectorAll('#screen-nutritionist .nav-tab')[1],'nt-plan')">+ Add</button></div>`).join('')}</div>`).join('');
+}
+function showLogin(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-login').classList.add('active')}
+function showAthlete(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-athlete').classList.add('active')}
+function showNutritionist(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-nutritionist').classList.add('active')}
+function athleteTab(el,id){document.querySelectorAll('#screen-athlete .nav-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['at-today','at-scan','at-stations','at-log'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none'});const tgt=document.getElementById(id);if(tgt)tgt.style.display='block';}
+function nutriTab(el,id){document.querySelectorAll('#screen-nutritionist .nav-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['nt-athletes','nt-plan','nt-menu','nt-alerts'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display='none'});const tgt=document.getElementById(id);if(tgt)tgt.style.display='block';}
+function showScanned(){document.getElementById('scanned-result').style.display='block';}
+function setPlanMode(m){document.getElementById('mode-exact').classList.toggle('active',m==='exact');document.getElementById('mode-macros').classList.toggle('active',m==='macros');document.getElementById('plan-exact').style.display=m==='exact'?'block':'none';document.getElementById('plan-macros').style.display=m==='macros'?'block':'none';}
+renderStations();renderAthletes();renderMenu();
+</script>
+</body>
+</html>
